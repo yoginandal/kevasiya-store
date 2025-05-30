@@ -13,6 +13,14 @@ import MedusaRadio from "@modules/common/components/radio"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
+interface AddressLocation {
+  address_1?: string
+  address_2?: string
+  postal_code?: string
+  city?: string
+  country_code?: string
+}
+
 const PICKUP_OPTION_ON = "__PICKUP_ON"
 const PICKUP_OPTION_OFF = "__PICKUP_OFF"
 
@@ -21,7 +29,7 @@ type ShippingProps = {
   availableShippingMethods: HttpTypes.StoreCartShippingOption[] | null
 }
 
-function formatAddress(address) {
+function formatAddress(address: AddressLocation | undefined) {
   if (!address) {
     return ""
   }
@@ -71,11 +79,11 @@ const Shipping: React.FC<ShippingProps> = ({
   const isOpen = searchParams.get("step") === "delivery"
 
   const _shippingMethods = availableShippingMethods?.filter(
-    (sm) => sm.service_zone?.fulfillment_set?.type !== "pickup"
+    (sm) => (sm as any).service_zone?.fulfillment_set?.type !== "pickup"
   )
 
   const _pickupMethods = availableShippingMethods?.filter(
-    (sm) => sm.service_zone?.fulfillment_set?.type === "pickup"
+    (sm) => (sm as any).service_zone?.fulfillment_set?.type === "pickup"
   )
 
   const hasPickupOptions = !!_pickupMethods?.length
@@ -233,7 +241,7 @@ const Shipping: React.FC<ShippingProps> = ({
                   </RadioGroup>
                 )}
                 <RadioGroup
-                  value={shippingMethodId}
+                  value={shippingMethodId ?? undefined}
                   onChange={(v) => handleSetShippingMethod(v, "shipping")}
                 >
                   {_shippingMethods?.map((option) => {
@@ -304,7 +312,7 @@ const Shipping: React.FC<ShippingProps> = ({
               <div data-testid="delivery-options-container">
                 <div className="pb-8 md:pt-0 pt-2">
                   <RadioGroup
-                    value={shippingMethodId}
+                    value={shippingMethodId ?? undefined}
                     onChange={(v) => handleSetShippingMethod(v, "pickup")}
                   >
                     {_pickupMethods?.map((option) => {
@@ -334,8 +342,8 @@ const Shipping: React.FC<ShippingProps> = ({
                               </span>
                               <span className="text-base-regular text-ui-fg-muted">
                                 {formatAddress(
-                                  option.service_zone?.fulfillment_set?.location
-                                    ?.address
+                                  (option as any).service_zone?.fulfillment_set
+                                    ?.location?.address
                                 )}
                               </span>
                             </div>
@@ -383,7 +391,7 @@ const Shipping: React.FC<ShippingProps> = ({
                 <Text className="txt-medium text-ui-fg-subtle">
                   {cart.shipping_methods?.at(-1)?.name}{" "}
                   {convertToLocale({
-                    amount: cart.shipping_methods.at(-1)?.amount!,
+                    amount: cart.shipping_methods?.at(-1)?.amount!,
                     currency_code: cart?.currency_code,
                   })}
                 </Text>
