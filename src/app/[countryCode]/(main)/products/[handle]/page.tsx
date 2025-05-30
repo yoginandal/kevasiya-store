@@ -59,9 +59,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     notFound()
   }
 
+  // Inside generateMetadata
   const product = await listProducts({
     countryCode: params.countryCode,
-    queryParams: { handle },
+    queryParams: { handle }, // Error points here (line 64 in your log)
   }).then(({ response }) => response.products[0])
 
   if (!product) {
@@ -87,9 +88,10 @@ export default async function ProductPage(props: Props) {
     notFound()
   }
 
+  // Inside ProductPage default export
   const pricedProduct = await listProducts({
     countryCode: params.countryCode,
-    queryParams: { handle: params.handle },
+    queryParams: { handle: params.handle }, // Same conceptual issue
   }).then(({ response }) => response.products[0])
 
   if (!pricedProduct) {
