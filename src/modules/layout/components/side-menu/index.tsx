@@ -25,8 +25,12 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
         <Popover className="h-full flex">
           {({ open, close }) => (
             <>
-              <div className="relative flex h-full">
+              <div
+                className="relative flex h-full"
+                suppressHydrationWarning={true}
+              >
                 <Popover.Button
+                  suppressHydrationWarning={true}
                   data-testid="nav-menu-button"
                   className="relative h-full flex items-center transition-all ease-out duration-200 focus:outline-none hover:text-ui-fg-base"
                 >
